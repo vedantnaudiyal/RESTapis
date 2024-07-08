@@ -5,10 +5,14 @@ package com.javaLearning.Training.RESTapis.configfuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 // import org.springframework.security.core.userdetails.User;
 // import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,18 +20,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.javaLearning.Training.RESTapis.filter.JwtAuthFilter;
 import com.javaLearning.Training.RESTapis.services.UserDetailServices;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalAuthentication
 public class SecurityConfiguration {
 
     // constructor based dependency injection
     final private UserDetailServices userDetailServices;
+    final private JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfiguration(UserDetailServices userDetailServices){
+    public SecurityConfiguration(UserDetailServices userDetailServices, JwtAuthFilter jwtAuthFilter){
         this.userDetailServices=userDetailServices;
+        this.jwtAuthFilter=jwtAuthFilter;
     }
 
     @Bean
@@ -36,15 +45,19 @@ public class SecurityConfiguration {
         .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
         .headers(headerConfigurer -> headerConfigurer.frameOptions(frameOptions -> frameOptions.disable())) //changed
         .authorizeHttpRequests(requests->{
-            requests.requestMatchers("/", "/home", "/register/**").permitAll();
+            requests.requestMatchers("/", "/home", "/register/**", "/authenticate").permitAll();
             requests.requestMatchers("/user/**").hasRole("USER");
             requests.requestMatchers("/admin/**").hasRole("ADMIN");
             requests.requestMatchers(HttpMethod.GET, "/employees/**").hasAnyRole("USER", "ADMIN");
             requests.requestMatchers("/employees/**").hasRole("ADMIN");
             requests.anyRequest().authenticated();
         })
-        .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginPage("/login").permitAll())
-        .logout((logout) -> logout.permitAll())
+        // .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginPage("/login").permitAll())
+        // .logout((logout) -> logout.permitAll())
+        .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // .and()
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .authenticationProvider(authenticationProvider())
         .build();
     }
 
@@ -65,6 +78,11 @@ public class SecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     // ----------------- Memory managed users (not in db) -----------------
