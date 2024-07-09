@@ -1,4 +1,4 @@
-package com.javaLearning.Training.RESTapis.configfuration;
+package com.javaLearning.Training.RESTapis.security;
 
 // import java.net.http.HttpRequest;
 
@@ -9,7 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,12 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.javaLearning.Training.RESTapis.filter.JwtAuthFilter;
-import com.javaLearning.Training.RESTapis.services.UserDetailServices;
-
 @Configuration
 @EnableWebSecurity
-@EnableGlobalAuthentication
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     // constructor based dependency injection
@@ -53,7 +50,7 @@ public class SecurityConfiguration {
             requests.anyRequest().authenticated();
         })
         // .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginPage("/login").permitAll())
-        // .logout((logout) -> logout.permitAll())
+        .logout((logout) -> logout.permitAll())
         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         // .and()
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,6 +1,6 @@
-package com.javaLearning.Training.RESTapis.services;
+package com.javaLearning.Training.RESTapis.security;
 
-import java.security.Key;
+// import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoder;
+// import io.jsonwebtoken.io.Decoder;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
@@ -73,7 +73,7 @@ public class JwtService {
                 .compact();
                 
     }
-    
+
     private SecretKey getSignkey(){
         byte[] keyBytes=Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

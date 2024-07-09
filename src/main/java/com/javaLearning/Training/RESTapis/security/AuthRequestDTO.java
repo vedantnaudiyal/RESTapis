@@ -1,4 +1,4 @@
-package com.javaLearning.Training.RESTapis.dto;
+package com.javaLearning.Training.RESTapis.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

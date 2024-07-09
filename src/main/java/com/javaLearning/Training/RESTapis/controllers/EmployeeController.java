@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+// import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -22,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.javaLearning.Training.RESTapis.dto.AuthRequestDTO;
+// import com.javaLearning.Training.RESTapis.dto.AuthRequestDTO;
 import com.javaLearning.Training.RESTapis.dto.EmployeeDTO;
 import com.javaLearning.Training.RESTapis.services.EmployeeServices;
-import com.javaLearning.Training.RESTapis.services.JwtService;
+// import com.javaLearning.Training.RESTapis.services.JwtService;
 
 import jakarta.validation.Valid;
 
@@ -40,11 +41,11 @@ import jakarta.validation.Valid;
 public class EmployeeController{
 
     private final EmployeeServices employeeServices;
-    private final JwtService jwtService;
+    // private final JwtService jwtService;
 
-    public EmployeeController(EmployeeServices employeeServices, JwtService jwtService){
+    public EmployeeController(EmployeeServices employeeServices){
         this.employeeServices=employeeServices;
-        this.jwtService= jwtService;
+        // this.jwtService= jwtService;
     }
 
     // path variables - url params(mandatory to provide)
@@ -78,5 +79,12 @@ public class EmployeeController{
     ){
         return new ResponseEntity<>(employeeServices.deleteEmployee(id), HttpStatus.OK);
     }
+
+    // @PutMapping(path="/{id}")
+    // public ResponseEntity<Boolean> updateEmployee(
+    //     @PathVariable Long id
+    // ){
+    //     return new ResponseEntity<>(employeeServices.deleteEmployee(id), HttpStatus.OK);
+    // }
 
 }
